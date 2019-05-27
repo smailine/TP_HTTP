@@ -29,6 +29,7 @@ public class ClientHttp {
     private static int PORT_SERVEUR = 1026;
     private InetAddress IP_SERVEUR;
     private static Socket sc;
+    private boolean autoflush=true;
     
     
     
@@ -40,7 +41,7 @@ public class ClientHttp {
             * Création des flux entrants et sortants du client
             */
            sc = new Socket(InetAddress.getLocalHost(),1026);
-           out = new PrintWriter(sc.getOutputStream()); 
+           out = new PrintWriter(sc.getOutputStream(),autoflush); 
            in = new BufferedReader(new InputStreamReader(sc.getInputStream()));
            
         }catch(IOException ex){
@@ -50,8 +51,17 @@ public class ClientHttp {
         
     }
     
-    public String creationRequete(){
+    public String creationRequete(String operation,String url, int port){
+        String commande = "";
+        switch(operation){
+            case "get" :
+                commande = "GET / HTTP/1.1 \n";
+            case "put":
+                commande="PUT / HTTP/1.1\n";
+            case "reponse":
+        }
         
+        return commande;
     }
     
     

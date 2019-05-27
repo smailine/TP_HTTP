@@ -24,22 +24,22 @@ public class ClientHttp {
      * @param args the command line arguments
      */
     
-    private BufferedReader in;
-    private PrintWriter out;
-    private static int PORT_SERVEUR = 1026;
-    private InetAddress IP_SERVEUR;
+    private static BufferedReader in;
+    private static PrintWriter out;
+    private final static int PORT_SERVEUR = 1026;
+    private final static String IP_SERVEUR = "192.168.43.67";
     private static Socket sc;
     
     
     
     
-    public void connexion(){
+    public static void connexion(){
         
         try{
            /**
             * Création des flux entrants et sortants du client
             */
-           sc = new Socket(InetAddress.getLocalHost(),1026);
+           sc = new Socket(InetAddress.getByName(IP_SERVEUR),PORT_SERVEUR);
            out = new PrintWriter(sc.getOutputStream()); 
            in = new BufferedReader(new InputStreamReader(sc.getInputStream()));
            
@@ -57,6 +57,8 @@ public class ClientHttp {
     
     public static void main(String[] args) {
         // TODO code application logic here
+        connexion();
+        
     }
     
 }

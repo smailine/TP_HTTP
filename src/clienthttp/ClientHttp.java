@@ -6,6 +6,7 @@
 package clienthttp;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,6 +14,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 /**
  *
@@ -30,7 +32,9 @@ public class ClientHttp {
     private final static String IP_SERVEUR = "192.168.43.67";
     private static Socket sc;
     private static boolean autoflush=true;
-    
+    private static String url_page="Fichier.txt";
+    private static String typeFichier="text/Html";
+    private int tailleFichier;
     
     
     
@@ -52,15 +56,19 @@ public class ClientHttp {
         
         
     }
-    
-    public String creationRequete(String operation,String url, int port){
+
+
+    public String creationRequete(String operation,String url, int port) throws UnknownHostException{
         String commande = "";
         switch(operation){
             case "get" :
                 commande = "GET / HTTP/1.1 \n";
+                commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\n";
             case "put":
-                commande="PUT / HTTP/1.1\n";
-            case "reponse":
+                commande="PUT /"+url_page+" HTTP/1.1\n";
+                commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\n";
+                commande+="Content-type:"+typeFichier;
+                commande+="Content_length:"+tailleFichier;
         }
         
         return commande;

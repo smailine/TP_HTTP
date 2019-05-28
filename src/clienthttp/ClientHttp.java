@@ -7,6 +7,9 @@ package clienthttp;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -28,6 +31,7 @@ public class ClientHttp {
      * @param args the command line arguments
      */
     
+    private static final int FILE_NOT_FOUND = -1;
     private static ErreurHTTP Erreur=new ErreurHTTP(); 
     /// liste d'erreur pour avoir le message erreur: get(codeErreur); les cles
     //sont des entiers
@@ -40,6 +44,7 @@ public class ClientHttp {
     private static boolean autoflush=true;
     private static String url_page="C:\\Users\\Ineida Cardoso\\Desktop\\Etu SUP\\Projet\\ARAR\\index.html";
     private static String typeFichier="text/Html";
+    private static FileWriter fichier;
 
     private static void strtoupper(String put) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -100,7 +105,38 @@ public class ClientHttp {
         if(Requete==Erreur.getERREUR().get(1))
             return 1;
         out.write(Requete);
+        
         return erreur;
+    }
+    
+    public static void ecrireDansFichier(String nomFichier,String ligne){
+        try{
+           fichier = new FileWriter(nomFichier);
+           fichier.write(ligne);
+        }catch(IOException ex){
+            System.out.println("Erreur lors de la création de fichier");
+        }
+        
+    }
+    
+    public static void lireDonneesRecu(){
+        boolean page_non_recu = true;
+        while(page_non_recu){
+            try{
+                if(in.ready()){
+                   String ligne = "";
+                   while(ligne !="EOF"){
+                       ligne = in.readLine();
+                       ecrireDansFichier("texte.txt",ligne);
+                   }
+                   page_non_recu = true;
+                   fichier.close();
+                }
+            }catch(IOException ex){
+                System.out.println("non lu");
+            }
+            
+        }
     }
     
     

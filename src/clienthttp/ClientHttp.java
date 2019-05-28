@@ -7,6 +7,9 @@ package clienthttp;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,6 +22,7 @@ import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.io.FileInputStream;
 
 /**
  *
@@ -40,12 +44,11 @@ public class ClientHttp {
     private final static String IP_SERVEUR = "192.168.43.67";
     private static Socket sc;
     private static boolean autoflush=true;
-    private static String url_page="C:\\Users\\Ineida Cardoso\\Desktop\\Etu SUP\\Projet\\ARAR\\index.html";
+    private static String url_page="index.html";
+    private static String telechargement="C:\\Users\\Ineida Cardoso\\Desktop\\Etu SUP\\Projet\\ARAR\\index.html";
     private static String typeFichier="text/Html";
-
-    private static void strtoupper(String put) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    private static  FileInputStream fichier;
+   
     private int tailleFichier;
     private Date date =new Date() ;
     
@@ -81,12 +84,27 @@ public class ClientHttp {
                     commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\n";
                     break;
                 case "put":
+
+                    {
+                        try {
+                            fichier = new FileInputStream(telechargement);
+                        } catch (FileNotFoundException ex) {
+                            return (String) Erreur.getERREUR().get(2);
+                        }
+                    }
+
                     commande="PUT /"+url_page+" HTTP/1.1\r\n";
                     commande+="Date: "+date.toString()+"\r\n";
                     commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\n";
                     commande+="Content-type:"+typeFichier+"\r\n";
                     commande+="Content_length:"+tailleFichier+"\r\n\r\n";
-                    commande+= "Bonjour, voici le contenu du fichier";
+                    {
+                        try {
+                            commande+= fichier.read();
+                        } catch (IOException ex) {
+                            return (String) Erreur.getERREUR().get(3);
+                        }
+                    }
                     break;
                 case "fermer":
                     commande = "GET /"+url_page+" HTTP/1.1 \r\n";
@@ -95,9 +113,7 @@ public class ClientHttp {
                     commande+="Connection: Closed";
                     break;
             }
-            /*}catch (UnknownHostException e){
-            return (String) Erreur.getERREUR().get(1);
-            }*/
+            
             return commande;
         } catch (UnknownHostException ex) {
             //Logger.getLogger(ClientHttp.class.getName()).log(Level.SEVERE, null, ex);
@@ -105,12 +121,9 @@ public class ClientHttp {
         }
     }
    
-    public int RecevoirPage(String url_page){
-        int erreur=0; //0 pas d'erreur
-        String Requete=creationRequete("fermer",url_page);
-        if(Requete==Erreur.getERREUR().get(1))
-            return 1;
-        out.write(Requete);
+    public int envoyerPage(String url_page){
+        
+        int erreur=0;
         return erreur;
     }
     

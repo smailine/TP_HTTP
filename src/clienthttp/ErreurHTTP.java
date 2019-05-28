@@ -15,8 +15,12 @@ import java.util.Hashtable;
  */
 public class ErreurHTTP{
  
-    public final static Hashtable ERREUR=new Hashtable();
+    private final static Hashtable ERREUR=new Hashtable();
     public ErreurHTTP(){
+        ERREUR.put(0,"Sucess");
+        ERREUR.put(1,"Unknown Host");
+        ERREUR.put(2,"File Not Found");
+        
         ERREUR.put(100,"Continue");
         ERREUR.put(101,"Switching_Protocols");
         
@@ -61,5 +65,10 @@ public class ErreurHTTP{
         ERREUR.put(504,"Gateway Time Out");
         ERREUR.put(505,"HTTP Version Not Supported");
        }
+
+    public static Hashtable getERREUR() {
+        return ERREUR;
+    }
+    
 }
     

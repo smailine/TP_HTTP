@@ -38,8 +38,12 @@ public class ClientHttp {
     private final static String IP_SERVEUR = "192.168.43.67";
     private static Socket sc;
     private static boolean autoflush=true;
-    private static String url_page="Fichier.txt";
+    private static String url_page="C:\\Users\\Ineida Cardoso\\Desktop\\Etu SUP\\Projet\\ARAR\\index.html";
     private static String typeFichier="text/Html";
+
+    private static void strtoupper(String put) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     private int tailleFichier;
     private Date date =new Date() ;
     
@@ -64,33 +68,48 @@ public class ClientHttp {
     }
 
 
-    public String creationRequete(String operation,String url) throws UnknownHostException{
+    public String creationRequete(String operation,String url){
         String commande = "";
-        switch(operation){
-            case "get" :
-                commande = "GET /"+url_page+" HTTP/1.1 \n";
-                commande+="Date: "+date.toString();
-                commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\n";
-            case "put":
-                commande="PUT /"+url_page+" HTTP/1.1\n";
-                commande+="Date: "+date.toString();
-                commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\n";
-                commande+="Content-type:"+typeFichier;
-                commande+="Content_length:"+tailleFichier;
-            case "fermer":
-                commande = "GET /"+url_page+" HTTP/1.1 \n";
-                commande+="Date: "+date.toString();
-                commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\n";
-                commande+="Connection: Closed";
-        }
+        //try{
+            switch(operation){ //transformer en minuscule pas de sensible à la case
+                case "get":
+                    commande = "GET /"+url_page+" HTTP/1.1 \n";
+                    commande+="Date: "+date.toString();
+                   // commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\n";
+                case "put":
+                    commande="PUT /"+url_page+" HTTP/1.1\n";
+                    commande+="Date: "+date.toString();
+                   // commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\n";
+                    commande+="Content-type:"+typeFichier;
+                    commande+="Content_length:"+tailleFichier;
+                case "fermer":
+                    commande = "GET /"+url_page+" HTTP/1.1 \n";
+                    commande+="Date: "+date.toString()+"\n";
+                    //commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\n";
+                    commande+="Connection: Closed";
+            }
+        /*}catch (UnknownHostException e){
+            return (String) Erreur.getERREUR().get(1);
+        }*/
         return commande;
     }
+   
+    public int RecevoirPage(String url_page){
+        int erreur=0; //0 pas d'erreur
+        String Requete=creationRequete("fermer",url_page);
+        if(Requete==Erreur.getERREUR().get(1))
+            return 1;
+        out.write(Requete);
+        return erreur;
+    }
+    
     
     public static void main(String[] args) {
         // TODO code application logic here
-        connexion();
-        
-     
+       // connexion();
+       ClientHttp client =new ClientHttp();
+       System.out.println(client.creationRequete("put",url_page));
+        System.out.println(client.Erreur.getERREUR().get(1));
         
     }
     

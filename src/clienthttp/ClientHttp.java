@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 
 /**
  *
@@ -34,6 +35,7 @@ public class ClientHttp {
      * @param args the command line arguments
      */
     
+    private static final int FILE_NOT_FOUND = -1;
     private static ErreurHTTP Erreur=new ErreurHTTP(); 
     /// liste d'erreur pour avoir le message erreur: get(codeErreur); les cles
     //sont des entiers
@@ -48,6 +50,7 @@ public class ClientHttp {
     private static String telechargement="C:\\Users\\Ineida Cardoso\\Desktop\\Etu SUP\\Projet\\ARAR\\index.html";
     private static String typeFichier="text/Html";
     private static  FileInputStream fichier;
+    private static  FileWriter fichier1;
    
     private int tailleFichier;
     private Date date =new Date() ;
@@ -124,7 +127,47 @@ public class ClientHttp {
     public int envoyerPage(String url_page){
         
         int erreur=0;
+        String requete=creationRequete("put",url_page);
+        if(requete==(String) Erreur.getERREUR().get(1))
+            return 1;
+        else if(requete==(String) Erreur.getERREUR().get(2)){
+            return 2;
+        }
+        else if(requete==(String) Erreur.getERREUR().get(3)){
+            return 3;
+        }
+        out.write(requete);
         return erreur;
+    }
+    
+    public static void ecrireDansFichier(String nomFichier,String ligne){
+        try{
+           fichier1 = new FileWriter(nomFichier);
+           fichier1.write(ligne);
+        }catch(IOException ex){
+            System.out.println("Erreur lors de la création de fichier");
+        }
+        
+    }
+    
+    public static void lireDonneesRecu(){
+        boolean page_non_recu = true;
+        while(page_non_recu){
+            try{
+                if(in.ready()){
+                   String ligne = "";
+                   while(ligne !="EOF"){
+                       ligne = in.readLine();
+                       ecrireDansFichier("texte.txt",ligne);
+                   }
+                   page_non_recu = true;
+                   fichier.close();
+                }
+            }catch(IOException ex){
+                System.out.println("non lu");
+            }
+            
+        }
     }
     
     

@@ -43,7 +43,7 @@ public class ClientHttp {
     private static BufferedReader in;
     private static PrintWriter out;
     private final static int PORT_SERVEUR = 1026;
-    private final static String IP_SERVEUR = "192.168.43.67";
+    private final static String IP_SERVEUR = "localhost";/*"192.168.43.67";*/
     private static Socket sc;
     private static boolean autoflush=true;
     private static String url_page="index.html";
@@ -156,7 +156,7 @@ public class ClientHttp {
             try{
                 if(in.ready()){
                    String ligne = "";
-                   while(ligne !="EOF"){
+                   while(ligne !=null){
                        ligne = in.readLine();
                        ecrireDansFichier("texte.txt",ligne);
                    }
@@ -173,9 +173,9 @@ public class ClientHttp {
     
     public static void main(String[] args) {
         // TODO code application logic here
-       // connexion();
-       ClientHttp client =new ClientHttp();
-       System.out.println(client.creationRequete("put",url_page));
+        connexion();
+       //ClientHttp client =new ClientHttp();
+       //System.out.println(client.creationRequete("put",url_page));
         
     }
     

@@ -40,7 +40,7 @@ public class ClientHttp {
     private static BufferedReader in;
     private static PrintWriter out;
     private final static int PORT_SERVEUR = 1026;
-    private final static String IP_SERVEUR ="localhost"; //"192.168.43.67";
+    private final static String IP_SERVEUR ="192.168.43.67";
     private static Socket sc;
     private static boolean autoflush=true;
     private static String url_page="index.html";
@@ -88,7 +88,7 @@ public class ClientHttp {
                     commande+="Date: "+date.toString()+"\r\n";
                     commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\n";
                     commande+="Content-type:"+typeFichier+"\r\n";
-                    commande+="Content_length:"+tailleFichier+"\r\n\r\n";
+                    commande+="Content_length: "+tailleFichier+"\r\n\r\n";
                     if(contenu(url)!=2 && contenu(url)!=3)
                         commande+= contenu(url);
                        
@@ -142,7 +142,7 @@ public class ClientHttp {
         try {
             reponse=in.readLine();
             split=reponse.split(" ");
-            Integer.parseInt(split[2]);
+            Integer.parseInt(split[1]);
         } catch (IOException ex) {
             return 408;
         }
@@ -167,6 +167,8 @@ public class ClientHttp {
     public static int lireDonneesRecu(){
         boolean page_non_recu = true; ///toujours a true
         boolean contenu=false;
+        int tailleRecu=0;
+        int tailleEspere=0;
         int lecture=0;
         //while(page_non_recu){
             try{
@@ -174,17 +176,21 @@ public class ClientHttp {
                    String ligne = "";
                    String[] split;
                    split=ligne.split(" ");
-                   int code =Integer.parseInt(split[2]);
+                   int code =Integer.parseInt(split[1]);
                    while(ligne !=null && code==200){
                        ligne = in.readLine();
+                       split=ligne.split(" "); 
+                       if(split[0]=="Content_length"){
+                           tailleEspere=Integer.parseInt(split[1]);
+                       }
                        if(ligne.length()==0){
                            contenu=true;
                        }
                        if(contenu){
                            lecture=ecrireDansFichier("texte.txt",ligne);
+                           tailleRecu+=ligne.length();
                            if (lecture==3){return 3;}
                        }
-                      
                    }
                    //page_non_recu = true;
                    fichier1.close();
@@ -192,10 +198,12 @@ public class ClientHttp {
             }catch(IOException ex){
                 return 3;
             }
-            
-        
-        return 0;
+            if(tailleRecu<tailleEspere)return 206;
+        return 200;
     }
+    
+    
+    
     public int deconnexion(){
         int erreur=0;
         String requete=creationRequete("fermer",url_page);
@@ -218,9 +226,9 @@ public class ClientHttp {
     
     public static void main(String[] args) {
         // TODO code application logic here
-       // connexion();
+       connexion();
        ClientHttp client =new ClientHttp();
-       System.out.println(client.creationRequete("put",url_page));
+       System.out.println(client.envoyerPage("url_page"));
         
     }
     

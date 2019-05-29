@@ -40,7 +40,7 @@ public class ClientHttp {
     private static BufferedReader in;
     private static PrintWriter out;
     private final static int PORT_SERVEUR = 1026;
-    private final static String IP_SERVEUR ="localhost"; //"192.168.43.67";
+    private final static String IP_SERVEUR ="192.168.43.67";
     private static Socket sc;
     private static boolean autoflush=true;
 
@@ -64,11 +64,11 @@ public class ClientHttp {
             */
 
            sc = new Socket(InetAddress.getByName(IP_SERVEUR),PORT_SERVEUR);
-           out = new PrintWriter(sc.getOutputStream(),autoflush); 
+           out = new PrintWriter(sc.getOutputStream()); 
            in = new BufferedReader(new InputStreamReader(sc.getInputStream()));
            
         }catch(IOException ex){
-            System.out.println("Erreur lors de la création des flux");
+            System.out.println("Erreur lors de la création des flux "+ex);
         }
         
         
@@ -81,14 +81,14 @@ public class ClientHttp {
             //try{
             switch(operation){ //transformer en minuscule pas de sensible à la case
                 case "get":
-                    commande = "GET/ "+url_page+" HTTP/1.1 \n";
-                    commande+="Date: "+date.toString();
-                    commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\n";
+                    commande = "GET /"+url_page+" HTTP/1.1 \r\n";
+                    commande+="Date: "+date.toString()+"\r\n";
+                    commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\r\n";
                     break;
                 case "put":
-                    commande="PUT/ "+url_page+" HTTP/1.1\r\n";
+                    commande="PUT /"+url_page+" HTTP/1.1\r\n";
                     commande+="Date: "+date.toString()+"\r\n";
-                    commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\n";
+                    commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\r\n";
                     commande+="Content-type:"+typeFichier+"\r\n";
                     commande+="Content_length:"+tailleFichier+"\r\n\r\n";
                     if(contenu(url)!=2 && contenu(url)!=3)
@@ -170,28 +170,34 @@ public class ClientHttp {
         boolean page_non_recu = true; ///toujours a true
         boolean contenu=false;
         int lecture=0;
-        //while(page_non_recu){
+        
             try{
-                if(in.ready()){
+                
                    String ligne = "";
-
+                   ligne = in.readLine();
+                   System.out.println(ligne);
                    String[] split;
                    split=ligne.split(" ");
-                   int code =Integer.parseInt(split[2]);
-                   while(ligne !=null && code==200){
-                       ligne = in.readLine();
+                   int code =Integer.parseInt(split[1]);
+                   int i =0;
+                   String test = ligne;
+                   while(ligne !=null){
+                       i++;
+                       //ligne = in.readLine();
+                       System.out.println(ligne);
                        if(ligne.length()==0){
                            contenu=true;
                        }
                        if(contenu){
-                           lecture=ecrireDansFichier("texte.txt",ligne);
+                           //lecture=ecrireDansFichier("C:\\Users\\Smaïline\\Desktop\\texte.txt",ligne);
                            if (lecture==3){return 3;}
                        }
-                      
+                      ligne = in.readLine();
+                      test+=ligne;
                    }
-                   //page_non_recu = true;
+                   lecture=ecrireDansFichier("C:\\Users\\Smaïline\\Desktop\\texte.txt",test);
                    fichier1.close();
-                }
+                
             }catch(IOException ex){
                 return 3;
             }
@@ -230,19 +236,34 @@ public class ClientHttp {
         else if(requete==(String) Erreur.getERREUR().get(3)){
             return 3;
         }
-        out.write(requete);
+        System.out.println(requete);
+        out.write(requete, 0, requete.length());
+        
         lireDonneesRecu();
         
         return 200;
         
     }
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         // TODO code application logic here
-        connexion();
+      
         
        ClientHttp client =new ClientHttp();
-       int ok = client.recevoirPage();
+       connexion();
+       
+       out.println("GET / HTTP/1.1");
+       out.println();
+       out.flush();
+       lireDonneesRecu();
+       /*System.out.println(in.readLine());
+       System.out.println(in.readLine());
+       System.out.println(in.readLine());
+       System.out.println(in.readLine());
+       System.out.println(in.readLine());*/
+       //lireDonneesRecu();
+       
+       //int ok = client.recevoirPage();
        //System.out.println(client.creationRequete("put",url_page));
         
     }

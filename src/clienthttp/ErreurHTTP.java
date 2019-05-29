@@ -20,7 +20,8 @@ public class ErreurHTTP{
         ERREUR.put(0,"Sucess");
         ERREUR.put(1,"Unknown Host");
         ERREUR.put(2,"File Not Found");
-        ERREUR.put(2,"Problem during outload file");
+        ERREUR.put(3,"Problem on openning file");
+        ERREUR.put(4,"Problem during log out");
         
         ERREUR.put(100,"Continue");
         ERREUR.put(101,"Switching_Protocols");

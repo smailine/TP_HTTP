@@ -90,7 +90,7 @@ public class ClientHttp {
                     commande+="Date: "+date.toString()+"\r\n";
                     commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\r\n";
                     commande+="Content-type:"+typeFichier+"\r\n";
-                    commande+="Content_length:"+tailleFichier+"\r\n\r\n";
+                    commande+="Content_length: "+tailleFichier+"\r\n\r\n";
                     if(contenu(url)!=2 && contenu(url)!=3)
                         commande+= contenu(url);
                        
@@ -144,7 +144,7 @@ public class ClientHttp {
         try {
             reponse=in.readLine();
             split=reponse.split(" ");
-            Integer.parseInt(split[2]);
+            Integer.parseInt(split[1]);
         } catch (IOException ex) {
             return 408;
         }
@@ -169,6 +169,8 @@ public class ClientHttp {
     public static int lireDonneesRecu(){
         boolean page_non_recu = true; ///toujours a true
         boolean contenu=false;
+        int tailleRecu=0;
+        int tailleEspere=0;
         int lecture=0;
         
             try{
@@ -179,21 +181,37 @@ public class ClientHttp {
                    String[] split;
                    split=ligne.split(" ");
                    int code =Integer.parseInt(split[1]);
+/*<<<<<<< HEAD*/
                    int i =0;
                    String test = ligne;
                    while(ligne !=null){
                        i++;
                        //ligne = in.readLine();
                        System.out.println(ligne);
+/*=======
+                   while(ligne !=null && code==200){
+                       ligne = in.readLine();
+                       split=ligne.split(" "); 
+                       if(split[0]=="Content_length:²"){
+                           tailleEspere=Integer.parseInt(split[1]);
+                       }
+>>>>>>> ed0d2296b9ab79f3c3d40eb39abef8eec0169229*/
                        if(ligne.length()==0){
                            contenu=true;
                        }
                        if(contenu){
+
                            //lecture=ecrireDansFichier("C:\\Users\\Smaïline\\Desktop\\texte.txt",ligne);
                            if (lecture==3){return 3;}
                        }
                       ligne = in.readLine();
                       test+=ligne;
+/*=======
+                           lecture=ecrireDansFichier("texte.txt",ligne);
+                           tailleRecu+=ligne.length();
+                           if (lecture==3){return 3;}
+                       }
+>>>>>>> ed0d2296b9ab79f3c3d40eb39abef8eec0169229*/
                    }
                    lecture=ecrireDansFichier("C:\\Users\\Smaïline\\Desktop\\texte.txt",test);
                    fichier1.close();
@@ -201,10 +219,12 @@ public class ClientHttp {
             }catch(IOException ex){
                 return 3;
             }
-            
-        
-        return 0;
+            if(tailleRecu<tailleEspere)return 206;
+        return 200;
     }
+    
+    
+    
     public int deconnexion(){
         int erreur=0;
         String requete=creationRequete("fermer",url_page);
@@ -218,6 +238,8 @@ public class ClientHttp {
         }
         out.write(requete);
         try {
+            in.close();
+            out.close();
             sc.close();
         } catch (IOException ex) {
             return 4;
@@ -247,6 +269,7 @@ public class ClientHttp {
     
     public static void main(String[] args) throws IOException {
         // TODO code application logic here
+
       
         
        ClientHttp client =new ClientHttp();
@@ -265,6 +288,7 @@ public class ClientHttp {
        
        //int ok = client.recevoirPage();
        //System.out.println(client.creationRequete("put",url_page));
+
         
     }
     

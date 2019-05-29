@@ -59,11 +59,12 @@ public class presentation extends Application{
       
       Button Lecture = new Button("Charger");
       Button Ecriture = new Button("Envoyer");
+      Button Deconnexion = new Button ("Deconnecter");
       HBox space = new HBox(nom);
       HBox fichier = new HBox(text1, monFichier);
      // HBox nbPort = new HBox(text2, port);
       //HBox ip = new HBox(text3, adresse);
-      HBox button = new HBox(Lecture,Ecriture);
+      HBox button = new HBox(Lecture,Ecriture,Deconnexion);
       
       VBox groupe = new VBox(fichier,button,space);
       groupe.setSpacing(10);
@@ -85,9 +86,8 @@ public class presentation extends Application{
           public void handle(ActionEvent event) {
                
                System.out.println("fichier" +monFichier.getCharacters());
-               int cr_rv;
-               //cr_rv= client.recevoirPage(monFichier.getCharacters().toString());
-               //afficherErreur(cr_rv);
+               int cr_rv=client.lireDonneesRecu();
+               afficherErreur(cr_rv);
           }
                
            
@@ -106,7 +106,19 @@ public class presentation extends Application{
                
           }
       });
-                
+           
+          Deconnexion.setOnAction(new EventHandler<ActionEvent>(){
+         
+          @Override
+          public void handle(ActionEvent event) {
+              
+               System.out.println("fichier" +monFichier.getCharacters());
+               int cr_sr;
+               cr_sr=client.deconnexion();
+               afficherErreur(cr_sr);
+               
+          }
+      });
     }
     
     public void afficherErreur( int CV){
@@ -120,6 +132,7 @@ public class presentation extends Application{
         //Optional<ButtonType> choice= dBox.showAndWait();
        
     }
+    
     
       
     

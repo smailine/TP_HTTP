@@ -40,10 +40,10 @@ public class ClientHttp {
     private static BufferedReader in;
     private static PrintWriter out;
     private final static int PORT_SERVEUR = 1026;
-    private final static String IP_SERVEUR = "localhost";/*"192.168.43.67";*/
+    private final static String IP_SERVEUR = "192.168.43.67";
     private static Socket sc;
     private static boolean autoflush=true;
-    private static String url_page="index.html";
+    private static String url_page="https://fr.wikipedia.org/wiki/Tulipe";
     private static String telechargement="C:\\Users\\Ineida Cardoso\\Desktop\\Etu SUP\\Projet\\ARAR\\index.html";
     private static String typeFichier="text/Html";
     private static  FileReader fichier;
@@ -79,12 +79,12 @@ public class ClientHttp {
             //try{
             switch(operation){ //transformer en minuscule pas de sensible à la case
                 case "get":
-                    commande = "GET /"+url_page+" HTTP/1.1 \n";
+                    commande = "GET/ "+url_page+" HTTP/1.1 \n";
                     commande+="Date: "+date.toString();
                     commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\n";
                     break;
                 case "put":
-                    commande="PUT /"+url_page+" HTTP/1.1\r\n";
+                    commande="PUT/ "+url_page+" HTTP/1.1\r\n";
                     commande+="Date: "+date.toString()+"\r\n";
                     commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\n";
                     commande+="Content-type:"+typeFichier+"\r\n";
@@ -94,7 +94,7 @@ public class ClientHttp {
                        
                     break;
                 case "fermer":
-                    commande = "GET /"+url_page+" HTTP/1.1 \r\n";
+                    commande = "GET/ "+url_page+" HTTP/1.1 \r\n";
                     commande+="Date: "+date.toString()+"\r\n";
                     commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\n";
                     commande+="Connection: Closed";
@@ -194,6 +194,28 @@ public class ClientHttp {
             return 4;
         }
         return 410;
+    }
+    
+    public int recevoirPage(){
+        int erreur=0;
+        String requete = creationRequete("get",url_page);
+        if(requete==(String) Erreur.getERREUR().get(1))
+            return 1;
+        else if(requete==(String) Erreur.getERREUR().get(2)){
+            return 2;
+        }
+        else if(requete==(String) Erreur.getERREUR().get(3)){
+            return 3;
+        }
+        out.write(requete);
+        lireDonneesRecu();
+        try {
+            sc.close();
+        } catch (IOException ex) {
+            return 4;
+        }
+        return 410;
+        
     }
     
     public static void main(String[] args) {

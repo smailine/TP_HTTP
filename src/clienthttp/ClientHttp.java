@@ -180,7 +180,7 @@ public class ClientHttp {
                    while(ligne !=null && code==200){
                        ligne = in.readLine();
                        split=ligne.split(" "); 
-                       if(split[0]=="Content_length"){
+                       if(split[0]=="Content_length:²"){
                            tailleEspere=Integer.parseInt(split[1]);
                        }
                        if(ligne.length()==0){
@@ -217,6 +217,8 @@ public class ClientHttp {
         }
         out.write(requete);
         try {
+            in.close();
+            out.close();
             sc.close();
         } catch (IOException ex) {
             return 4;

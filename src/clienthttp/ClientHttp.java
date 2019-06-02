@@ -61,11 +61,11 @@ public class ClientHttp {
             */
 
            sc = new Socket(InetAddress.getByName(IP_SERVEUR),PORT_SERVEUR);
-           out = new PrintWriter(sc.getOutputStream(),autoflush); 
+           out = new PrintWriter(sc.getOutputStream()); 
            in = new BufferedReader(new InputStreamReader(sc.getInputStream()));
            
         }catch(IOException ex){
-            System.out.println("Erreur lors de la création des flux");
+            System.out.println("Erreur lors de la création des flux "+ex);
         }
         
         
@@ -164,31 +164,36 @@ public class ClientHttp {
         int tailleRecu=0;
         int tailleEspere=0;
         int lecture=0;
-        //while(page_non_recu){
+        
             try{
-                if(in.ready()){
+                
                    String ligne = "";
+                   ligne = in.readLine();
+                   System.out.println(ligne);
                    String[] split;
                    split=ligne.split(" ");
                    int code =Integer.parseInt(split[1]);
+/*<<<<<<< HEAD*/
+                   int i =0;
+                   String test = ligne;
+                   while(ligne !=null){
+                       i++;
+                       //ligne = in.readLine();
+                       System.out.println(ligne);
                    while(ligne !=null && code==200){
                        ligne = in.readLine();
                        split=ligne.split(" "); 
                        if(split[0]=="Content_length:²"){
                            tailleEspere=Integer.parseInt(split[1]);
                        }
-                       if(ligne.length()==0){
-                           contenu=true;
-                       }
-                       if(contenu){
                            lecture=ecrireDansFichier("texte.txt",ligne);
                            tailleRecu+=ligne.length();
                            if (lecture==3){return 3;}
                        }
                    }
-                   //page_non_recu = true;
+                   lecture=ecrireDansFichier("C:\\Users\\Smaïline\\Desktop\\texte.txt",test);
                    fichier1.close();
-                }
+                
             }catch(IOException ex){
                 return 3;
             }
@@ -261,12 +266,48 @@ public class ClientHttp {
     }
     
     
-    public static void main(String[] args) {
+    public int recevoirPage(){
+        int erreur=0;
+        String requete = creationRequete("get",url_page);
+        if(requete==(String) Erreur.getERREUR().get(1))
+            return 1;
+        else if(requete==(String) Erreur.getERREUR().get(2)){
+            return 2;
+        }
+        else if(requete==(String) Erreur.getERREUR().get(3)){
+            return 3;
+        }
+        System.out.println(requete);
+        out.write(requete, 0, requete.length());
+        
+        lireDonneesRecu();
+        
+        return 200;
+        
+    }
+    
+    public static void main(String[] args) throws IOException {
         // TODO code application logic here
-       
+
+      
+        
        ClientHttp client =new ClientHttp();
        connexion();
-       ///client.recevoirPage();
+       
+       out.println("GET / HTTP/1.1");
+       out.println();
+       out.flush();
+       lireDonneesRecu();
+       /*System.out.println(in.readLine());
+       System.out.println(in.readLine());
+       System.out.println(in.readLine());
+       System.out.println(in.readLine());
+       System.out.println(in.readLine());*/
+       //lireDonneesRecu();
+       
+       //int ok = client.recevoirPage();
+       //System.out.println(client.creationRequete("put",url_page));
+
         
     }
     

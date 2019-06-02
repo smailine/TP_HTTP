@@ -39,16 +39,15 @@ public class ClientHttp {
     
     private static BufferedReader in;
     private static PrintWriter out;
-    private final static int PORT_SERVEUR = 1026;
-    private final static String IP_SERVEUR ="192.168.43.67";
+    private static int PORT_SERVEUR = 80;
+    private static String IP_SERVEUR ="https://fr.wikipedia.org/wiki/Tulipe";
     private static Socket sc;
     private static boolean autoflush=true;
-    private static String url_page="index.html";
-    private static String telechargement="C:\\Users\\Ineida Cardoso\\Desktop\\Etu SUP\\Projet\\ARAR\\HTTP\\";
+    private static String url_page="https://fr.wikipedia.org/wiki/Tulipe";
+    private static String dossier="C:\\Users\\Ineida Cardoso\\Desktop\\Etu SUP\\Projet\\ARAR\\HTTP\\";
     private static String typeFichier="text/Html";
     private static  FileReader fichier;
     private static  FileWriter fichier1;
-    private static int tempsAttente=80000;
     private int tailleFichier;
     private Date date =new Date() ;
     
@@ -79,25 +78,27 @@ public class ClientHttp {
             //try{
             switch(operation){ //transformer en minuscule pas de sensible à la case
                 case "get":
-                    commande = "GET /"+url_page+" HTTP/1.1 \n";
-                    commande+="Date: "+date.toString();
-                    commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\n";
+                    out.println("GET /"+dossier+url+" HTTP/1.1");
+                    out.println("Date: "+date.toString());
+                    out.println("Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR);
                     break;
                 case "put":
-                    commande="PUT /"+url_page+" HTTP/1.1\r\n";
-                    commande+="Date: "+date.toString()+"\r\n";
-                    commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\n";
-                    commande+="Content-type:"+typeFichier+"\r\n";
-                    commande+="Content_length: "+tailleFichier+"\r\n\r\n";
-                    if(contenu(url)!=2 && contenu(url)!=3)
-                        commande+= contenu(url);
+                    out.println("PUT /"+dossier+url+" HTTP/1.1");
+                    out.println("Date: "+date.toString());
+                    out.println("Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR);
+                    out.println("Content-type:"+typeFichier);
+                    int n=contenu(url);
+                    out.println("Content_length: "+tailleFichier);
+                    out.println();
+                    if(n!=2 && n!=3)
+                        out.println(fichier);
                        
                     break;
                 case "fermer":
-                    commande = "GET /"+url_page+" HTTP/1.1 \r\n";
-                    commande+="Date: "+date.toString()+"\r\n";
-                    commande+="Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR+"\n";
-                    commande+="Connection: Closed";
+                    out.println("GET /"+dossier+url+" HTTP/1.1 ");
+                    out.println("Date: "+date.toString());
+                    out.println("Host: "+InetAddress.getByName(IP_SERVEUR)+":"+PORT_SERVEUR);
+                    out.println("Connection: Closed");
                     break;
             }
             
@@ -111,8 +112,9 @@ public class ClientHttp {
         
          int contenu;
             try {
-                fichier = new FileReader(telechargement+file);
+                fichier = new FileReader(dossier+file);
                 contenu=fichier.read();
+                tailleFichier=(int) new File(dossier+file).length();
                 fichier.close();
             } catch (FileNotFoundException ex) {
                 return 2; //(String) Erreur.getERREUR().get(2);
@@ -130,19 +132,11 @@ public class ClientHttp {
         String[] split;
         int erreur=0;
         String requete=creationRequete("put",url_page);
-        if(requete==(String) Erreur.getERREUR().get(1))
-            return 1;
-        else if(requete==(String) Erreur.getERREUR().get(2)){
-            return 2;
-        }
-        else if(requete==(String) Erreur.getERREUR().get(3)){
-            return 3;
-        }
-        out.write(requete);
         try {
             reponse=in.readLine();
             split=reponse.split(" ");
-            Integer.parseInt(split[1]);
+          
+            
         } catch (IOException ex) {
             return 408;
         }
@@ -151,12 +145,12 @@ public class ClientHttp {
         } catch (IOException ex) {
             return 4;
         }
-        return 410;
+         return  Integer.parseInt(split[1]);
     }
     
     public static int ecrireDansFichier(String nomFichier,String ligne){
         try{
-           fichier1 = new FileWriter(nomFichier);
+           fichier1 = new FileWriter(dossier+nomFichier);
            fichier1.write(ligne);
         }catch(IOException ex){
            return 3;
@@ -225,12 +219,54 @@ public class ClientHttp {
         }
         return 410;
     }
+
+    public static String getIP_SERVEUR() {
+        return IP_SERVEUR;
+    }
+
+    public static void setIP_SERVEUR(String IP_SERVEUR) {
+        ClientHttp.IP_SERVEUR = IP_SERVEUR;
+    }
+
+    public static String getUrl_page() {
+        return url_page;
+    }
+
+    public static void setUrl_page(String url_page) {
+        ClientHttp.url_page = url_page;
+    }
+
+    public static String getDossier() {
+        return dossier;
+    }
+
+    public static void setDossier(String dossier) {
+        ClientHttp.dossier = dossier;
+    }
+
+    public static String getTypeFichier() {
+        return typeFichier;
+    }
+
+    public static void setTypeFichier(String typeFichier) {
+        ClientHttp.typeFichier = typeFichier;
+    }
+
+    public static int getPORT_SERVEUR() {
+        return PORT_SERVEUR;
+    }
+
+    public static void setPORT_SERVEUR(int PORT_SERVEUR) {
+        ClientHttp.PORT_SERVEUR = PORT_SERVEUR;
+    }
+    
     
     public static void main(String[] args) {
         // TODO code application logic here
-       connexion();
+       
        ClientHttp client =new ClientHttp();
-       System.out.println(client.envoyerPage("url_page"));
+       connexion();
+       ///client.recevoirPage();
         
     }
     

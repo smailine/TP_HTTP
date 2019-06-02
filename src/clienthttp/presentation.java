@@ -47,31 +47,45 @@ public class presentation extends Application{
        
         //initialiser les labels
       Label text1 = new Label();
-     // Label text2 = new Label();
+      Label text2 = new Label();
       Label text3 = new Label();
-      text1.setText("Saisissez le nom de fichier ");
-      //text2.setText("Saisissez le port ");
-      //text3.setText("Saisissez l'addresse");
+      Label text4 = new Label();
+      Label text5 = new Label();
+      text1.setText("Saisissez la localisation du fichier");
+      text2.setText("Saisissez le port du serveur ");
+      text3.setText("Saisissez l'addresse Ip du serveur");
+      text4.setText("Saisissez le nom du fichier ");
+      text5.setText("Saisissez le type de fichier");
       Label nom= new Label("Cardoso, Eynard, Nollet, Viraragavane");
       //definition de zones de saisies 
       TextField monFichier = new TextField("Texte.txt");
-      //TextField adresse = new TextField("192.168.43.67");
+      TextField typeFichier = new TextField("texte/html");
+      TextField adresse = new TextField("192.168.43.67");
+      TextField port = new TextField("1026");
+      TextField dossier = new TextField("C:\\Users\\Ineida Cardoso\\Desktop\\Etu SUP\\Projet\\ARAR\\HTTP\\");
       
-      Button Lecture = new Button("Charger");
-      Button Ecriture = new Button("Envoyer");
+      
+      
+      Button Lecture = new Button("Charger (get)");
+      Button Ecriture = new Button("Envoyer (put)");
       Button Deconnexion = new Button ("Deconnecter");
       HBox space = new HBox(nom);
-      HBox fichier = new HBox(text1, monFichier);
-     // HBox nbPort = new HBox(text2, port);
-      //HBox ip = new HBox(text3, adresse);
+      HBox fichier = new HBox(text4, monFichier);
+      HBox tFichier=new HBox(text5, typeFichier);
+      HBox Dossier = new HBox(text1,dossier);
+      HBox nbPort = new HBox(text2, port);
+      HBox ip = new HBox(text3, adresse);
+      HBox Vide1= new HBox();
+      VBox Vide2= new VBox();
       HBox button = new HBox(Lecture,Ecriture,Deconnexion);
       
-      VBox groupe = new VBox(fichier,button,space);
+      VBox groupe = new VBox(Vide2,ip,nbPort,Dossier,fichier,tFichier,button,Vide1,space);
       groupe.setSpacing(10);
       BorderPane Border =new BorderPane();
-      stage.setTitle("Emission et Reception de fichier");
+      stage.setTitle("Chargement et envoie d'une page http au serveur");
       Border.setCenter(groupe);
-      
+      Border.setLeft(Vide2);
+   
       
       Scene scene = new Scene(Border, Color.DARKGRAY);
       stage.setScene(scene);
@@ -84,7 +98,10 @@ public class presentation extends Application{
          
           @Override
           public void handle(ActionEvent event) {
-               
+              client.setIP_SERVEUR(adresse.getCharacters().toString());
+               client.setPORT_SERVEUR(Integer.parseInt(port.getCharacters().toString()));
+               client.setDossier(dossier.getCharacters().toString());
+               client.setTypeFichier(typeFichier.getCharacters().toString());
                System.out.println("fichier" +monFichier.getCharacters());
                int cr_rv=client.lireDonneesRecu();
                afficherErreur(cr_rv);
@@ -98,8 +115,10 @@ public class presentation extends Application{
          
           @Override
           public void handle(ActionEvent event) {
-              
-               System.out.println("fichier" +monFichier.getCharacters());
+               client.setIP_SERVEUR(adresse.getCharacters().toString());
+               client.setPORT_SERVEUR(Integer.parseInt(port.getCharacters().toString()));
+               client.setDossier(dossier.getCharacters().toString());
+               client.setTypeFichier(typeFichier.getCharacters().toString());
                int cr_sr;
                cr_sr=client.envoyerPage(monFichier.getCharacters().toString());
                afficherErreur(cr_sr);

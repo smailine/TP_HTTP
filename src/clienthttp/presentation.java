@@ -102,8 +102,10 @@ public class presentation extends Application{
                client.setPORT_SERVEUR(Integer.parseInt(port.getCharacters().toString()));
                client.setDossier(dossier.getCharacters().toString());
                client.setTypeFichier(typeFichier.getCharacters().toString());
+               client.setUrl_page(monFichier.getCharacters().toString());
                System.out.println("fichier" +monFichier.getCharacters());
-               int cr_rv=client.lireDonneesRecu();
+               
+               int cr_rv=client.recevoirPage();
                afficherErreur(cr_rv);
           }
                
